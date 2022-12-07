@@ -8,7 +8,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'qr_provider.dart';
 
 const minNameLength = 2;
-const minPhoneLength = 9;
+const minBusinessCodeLength = 6;
+const minPersonalCodeLength = 9;
 
 String? validateName(value) {
   if (value.length < minNameLength) {
@@ -25,11 +26,11 @@ bool _isNumeric(String str) {
   return int.tryParse(str) != null;
 }
 
-String? validatePhone(value) {
+String? validateCode(value) {
   if (!_isNumeric(value)) {
     return 'Enter a number e.g. 600978 or 0792153258';
-  } else if (value.length < minPhoneLength) {
-    return 'Number must be at least $minPhoneLength digits';
+  } else if ( value.length < minBusinessCodeLength) {
+    return 'Number must be at least $minBusinessCodeLength digits';
   } else {
     return null;
   }
@@ -47,7 +48,7 @@ class HomePage extends HookConsumerWidget {
     final qrdata = useTextEditingController();
     final qrLabel = useTextEditingController();
     final _formKey = GlobalKey<FormState>();
-    String dropdownValue = list.first;
+    String codeType = list.first;
 
     tabController.addListener(() => index.value = tabController.index);
     final qrData = ref.watch(qrProvider.notifier);
@@ -61,7 +62,7 @@ class HomePage extends HookConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: TextFormField(
           // The validator receives the text that the user has entered.
-          validator: validatePhone,
+          validator: validateCode,
           decoration: const InputDecoration(
             border: OutlineInputBorder(
               borderSide: BorderSide(),
@@ -97,7 +98,7 @@ class HomePage extends HookConsumerWidget {
               alignment: Alignment.topLeft,
               child: DropdownButtonFormField<String>(
                 autofocus: true,
-                value: dropdownValue,
+                value: codeType,
                 icon: const Icon(Icons.arrow_downward),
                 elevation: 16,
                 style: const TextStyle(color: Colors.black),
@@ -109,7 +110,7 @@ class HomePage extends HookConsumerWidget {
                 ),
                 onChanged: (String? value) {
                   // This is called when the user selects an item.
-                  dropdownValue = value!;
+                  codeType = value!;
                 },
                 items: list.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
@@ -129,8 +130,8 @@ class HomePage extends HookConsumerWidget {
             if (_formKey.currentState!.validate()) {
               qrData.qrData = qrdata.text;
               qrData.label = qrLabel.text;
-              qrData.link = composePhoneLink(qrData.qrData!);
-              qrData.codeType = dropdownValue;
+              qrData.link = composeCodeLink(qrData.qrData!, codeType);
+              qrData.codeType = codeType;
               Navigator.pushNamed(context, '/ViewQR');
             }
           },
@@ -157,7 +158,7 @@ class HomePage extends HookConsumerWidget {
             children: [
               const Spacer(),
               CupertinoButton(
-                child: const Text('Create Qr'),
+                child: const Text('Create QR'),
                 onPressed: () => showDialog(
                   context: context,
                   builder: (context) {
@@ -171,11 +172,10 @@ class HomePage extends HookConsumerWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text('Your Qr Data'),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 codeTypeComponent(),
                                 codeComponent(),
                                 labelComponent(),
-                                const SizedBox(height: 20),
                                 saveButton(),
                               ],
                             ),
@@ -195,7 +195,7 @@ class HomePage extends HookConsumerWidget {
             unselectedLabelColor: Colors.grey,
             labelColor: Colors.black87,
             tabs: const [
-              Tab(text: 'Created'),
+              Tab(text: 'Your QR Codes'),
             ],
           ),
         ),
