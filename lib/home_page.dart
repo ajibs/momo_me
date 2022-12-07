@@ -28,8 +28,8 @@ bool _isNumeric(String str) {
 
 String? validateCode(value) {
   if (!_isNumeric(value)) {
-    return 'Enter a number e.g. 600978 or 0792153258';
-  } else if ( value.length < minBusinessCodeLength) {
+    return 'Enter a number e.g. 600978';
+  } else if (value.length < minBusinessCodeLength) {
     return 'Number must be at least $minBusinessCodeLength digits';
   } else {
     return null;
@@ -59,7 +59,7 @@ class HomePage extends HookConsumerWidget {
 
     codeComponent() {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: TextFormField(
           // The validator receives the text that the user has entered.
           validator: validateCode,
@@ -76,7 +76,7 @@ class HomePage extends HookConsumerWidget {
 
     labelComponent() {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: TextFormField(
           // The validator receives the text that the user has entered.
           validator: validateName,
@@ -93,7 +93,7 @@ class HomePage extends HookConsumerWidget {
 
     codeTypeComponent() {
       return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Align(
               alignment: Alignment.topLeft,
               child: DropdownButtonFormField<String>(
@@ -122,28 +122,17 @@ class HomePage extends HookConsumerWidget {
     }
 
     saveButton() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: ElevatedButton(
-          onPressed: () async {
-            // Validate returns true if the form is valid, or false otherwise.
-            if (_formKey.currentState!.validate()) {
-              qrData.qrData = qrdata.text;
-              qrData.label = qrLabel.text;
-              qrData.link = composeCodeLink(qrData.qrData!, codeType);
-              qrData.codeType = codeType;
-              Navigator.pushNamed(context, '/ViewQR');
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            minimumSize: const Size(253, 62),
-          ),
-          child: const Text(
-            'Create QR',
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
+      return CupertinoButton(
+        child: const Text('Create'),
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            qrData.qrData = qrdata.text;
+            qrData.label = qrLabel.text;
+            qrData.link = composeCodeLink(qrData.qrData!, codeType);
+            qrData.codeType = codeType;
+            Navigator.pushNamed(context, '/ViewQR');
+          }
+        },
       );
     }
 
