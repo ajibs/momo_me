@@ -60,7 +60,7 @@ class ViewQR extends HookConsumerWidget {
     }
   }
 
-  saveQRButtonComponent(qrData, BuildContext context) {
+  saveQRButton(qrData, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       child: ElevatedButton(
@@ -75,6 +75,27 @@ class ViewQR extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  returnToHomeButton(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/Home');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              minimumSize: const Size(253, 62),
+            ),
+            child: const Text(
+              'Return to Home',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ),
+        ));
   }
 
   @override
@@ -114,8 +135,8 @@ class ViewQR extends HookConsumerWidget {
               style: const TextStyle(fontSize: 15),
             ),
             const SizedBox(height: 25),
-            saveQRButtonComponent(qrData, context),
-            const SizedBox(height: 25)
+            saveQRButton(qrData, context),
+            returnToHomeButton(context),
           ],
         ),
       ),

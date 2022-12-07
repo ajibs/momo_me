@@ -90,7 +90,7 @@ class HomePage extends HookConsumerWidget {
       );
     }
 
-    saveButtonComponent() {
+    saveButton() {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: ElevatedButton(
@@ -101,7 +101,7 @@ class HomePage extends HookConsumerWidget {
               qrData.qrData = qrdata.text;
               qrData.label = qrLabel.text;
               qrData.link = composePhoneLink(qrData.qrData!);
-              Navigator.pushNamed(context, '/CreateQr');
+              Navigator.pushNamed(context, '/ViewQR');
             }
           },
           style: ElevatedButton.styleFrom(
@@ -145,7 +145,7 @@ class HomePage extends HookConsumerWidget {
                                 codeComponent(),
                                 labelComponent(),
                                 const SizedBox(height: 20),
-                                saveButtonComponent()
+                                saveButton(),
                               ],
                             ),
                           ),
@@ -200,7 +200,7 @@ class HomePage extends HookConsumerWidget {
                         qrData.link = qrData.getQRInfo(i)["link"];
                         qrData.label = qrData.getQRInfo(i)["label"];
                         qrData.qrData = qrData.getQRInfo(i)["code"];
-                        Navigator.pushNamed(context, '/CreateQr');
+                        Navigator.pushNamed(context, '/ViewQR');
                       },
                     ),
                   ),

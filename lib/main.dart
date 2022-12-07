@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         '/Home': (_) => const HomePage(),
-        '/CreateQr': (_) => ViewQR(),
+        '/ViewQR': (_) => ViewQR(),
       },
     );
   }
