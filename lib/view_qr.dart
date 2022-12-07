@@ -11,12 +11,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:momo_me/qr_provider.dart';
 
-class CreateQrPage extends HookConsumerWidget {
+class ViewQR extends HookConsumerWidget {
   final qrKey = GlobalKey();
 
-  CreateQrPage({Key? key}) : super(key: key);
+  ViewQR({Key? key}) : super(key: key);
 
-  takeScreenShot(ref) async {
+  takeScreenShot(ref, BuildContext context) async {
     try {
       PermissionStatus res;
       res = await Permission.storage.request();
@@ -35,18 +35,54 @@ class CreateQrPage extends HookConsumerWidget {
           imgFile.writeAsBytes(pngBytes);
           GallerySaver.saveImage(imgFile.path).then((success) async {
             // store in hive for later retrieval
-            await ref.saveQRInfo(ref.qrData!, ref.label!, ref.link);
+            await ref.saveQRInfo(ref.qrData, ref.label, ref.link);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Data Saved')),
+            );
           });
         }
       }
     } catch (err) {
-      print("error here $err");
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Error saving qr code'),
+                content: const Text(
+                    "Please ensure to you've granted the app gallery permissions and try again"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ));
     }
+  }
+
+  saveQRButtonComponent(qrData, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: ElevatedButton(
+        onPressed: () => takeScreenShot(qrData, context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          minimumSize: const Size(253, 62),
+        ),
+        child: const Text(
+          'Save QR',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final qrData = ref.watch(qrProvider.notifier);
+    print("qr data here");
+    print(qrData.link);
+    print(qrData.label);
 
     return Scaffold(
       appBar: AppBar(),
@@ -59,7 +95,7 @@ class CreateQrPage extends HookConsumerWidget {
               child: RepaintBoundary(
                 key: qrKey,
                 child: QrImage(
-                  data: qrData.link ?? '',
+                  data: qrData.link ?? 'no link present',
                   size: 250,
                   backgroundColor: Colors.white,
                   version: QrVersions.auto,
@@ -69,12 +105,16 @@ class CreateQrPage extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 25),
-            Text(qrData.label ?? ""),
-            const SizedBox(height: 25),
-            CupertinoButton(
-              child: const Text("Save"),
-              onPressed: () => takeScreenShot(qrData),
+            Text(
+              "Label: ${qrData.label}",
+              style: const TextStyle(fontSize: 15),
             ),
+            Text(
+              "Code: ${qrData.qrData}",
+              style: const TextStyle(fontSize: 15),
+            ),
+            const SizedBox(height: 25),
+            saveQRButtonComponent(qrData, context),
             const SizedBox(height: 25)
           ],
         ),

@@ -6,13 +6,6 @@ final qrProvider = ChangeNotifierProvider(
   (_) => QrCodeProvider(),
 );
 
-class QRInfo {
-  String? phone;
-  String? label;
-  String? link;
-  QRInfo(this.phone, this.label, this.link);
-}
-
 class QrCodeProvider extends ChangeNotifier {
   QrCodeProvider() : super();
 
@@ -27,23 +20,27 @@ class QrCodeProvider extends ChangeNotifier {
   void getQrs() {
     // box.delete('createdQrList');
     createdQrs = box.get('createdQrList') ?? [];
+    print("getting qrs");
+    print(createdQrs);
   }
 
   getQRInfo(int i) {
     return {
-      "phone": createdQrs[i]["phone"],
+      "code": createdQrs[i]["code"],
       "label": createdQrs[i]["label"],
       "link": createdQrs[i]["link"],
     };
   }
 
-  Future<void> saveQRInfo(String phone, label, link) async {
+  Future<void> saveQRInfo(String code, label, link) async {
     List tempList = box.get('createdQrList') ?? [];
-    Map<String, String> data = {"phone": phone, "label": label, "link": link};
+    Map<String, String> data = {"code": code, "label": label, "link": link};
     box.put('createdQrList', [
       ...tempList,
       data,
     ]);
+    print("saving qrs");
+    print(data);
     createdQrs.add(data);
   }
 }

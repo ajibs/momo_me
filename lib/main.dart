@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'create_qr_page.dart';
+import 'view_qr.dart';
 import 'home_page.dart';
 
 void main() async {
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         '/Home': (_) => const HomePage(),
-        '/CreateQr': (_) => CreateQrPage(),
+        '/CreateQr': (_) => ViewQR(),
       },
     );
   }
