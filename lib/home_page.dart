@@ -47,6 +47,7 @@ class HomePage extends HookConsumerWidget {
     final qrdata = useTextEditingController();
     final qrLabel = useTextEditingController();
     final _formKey = GlobalKey<FormState>();
+    String dropdownValue = list.first;
 
     tabController.addListener(() => index.value = tabController.index);
     final qrData = ref.watch(qrProvider.notifier);
@@ -68,7 +69,6 @@ class HomePage extends HookConsumerWidget {
             labelText: 'Merchant Code or Phone Number',
           ),
           controller: qrdata,
-          autofocus: true,
         ),
       );
     }
@@ -90,17 +90,47 @@ class HomePage extends HookConsumerWidget {
       );
     }
 
+    codeTypeComponent() {
+      return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          child: Align(
+              alignment: Alignment.topLeft,
+              child: DropdownButtonFormField<String>(
+                autofocus: true,
+                value: dropdownValue,
+                icon: const Icon(Icons.arrow_downward),
+                elevation: 16,
+                style: const TextStyle(color: Colors.black),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(),
+                  ),
+                  labelText: 'Type of Code',
+                ),
+                onChanged: (String? value) {
+                  // This is called when the user selects an item.
+                  dropdownValue = value!;
+                },
+                items: list.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              )));
+    }
+
     saveButton() {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: ElevatedButton(
           onPressed: () async {
             // Validate returns true if the form is valid, or false otherwise.
-
             if (_formKey.currentState!.validate()) {
               qrData.qrData = qrdata.text;
               qrData.label = qrLabel.text;
               qrData.link = composePhoneLink(qrData.qrData!);
+              qrData.codeType = dropdownValue;
               Navigator.pushNamed(context, '/ViewQR');
             }
           },
@@ -142,6 +172,7 @@ class HomePage extends HookConsumerWidget {
                               children: [
                                 const Text('Your Qr Data'),
                                 const SizedBox(height: 20),
+                                codeTypeComponent(),
                                 codeComponent(),
                                 labelComponent(),
                                 const SizedBox(height: 20),
@@ -200,6 +231,7 @@ class HomePage extends HookConsumerWidget {
                         qrData.link = qrData.getQRInfo(i)["link"];
                         qrData.label = qrData.getQRInfo(i)["label"];
                         qrData.qrData = qrData.getQRInfo(i)["code"];
+                        qrData.codeType = qrData.getQRInfo(i)["codeType"];
                         Navigator.pushNamed(context, '/ViewQR');
                       },
                     ),

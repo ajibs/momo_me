@@ -14,14 +14,13 @@ class QrCodeProvider extends ChangeNotifier {
   String? qrData;
   String? label;
   String? link;
+  String? codeType;
 
   List<dynamic> createdQrs = [];
 
   void getQrs() {
     // box.delete('createdQrList');
     createdQrs = box.get('createdQrList') ?? [];
-    print("getting qrs");
-    print(createdQrs);
   }
 
   getQRInfo(int i) {
@@ -29,18 +28,22 @@ class QrCodeProvider extends ChangeNotifier {
       "code": createdQrs[i]["code"],
       "label": createdQrs[i]["label"],
       "link": createdQrs[i]["link"],
+      "codeType": createdQrs[i]["codeType"]
     };
   }
 
-  Future<void> saveQRInfo(String code, label, link) async {
+  Future<void> saveQRInfo(String code, label, link, codeType) async {
     List tempList = box.get('createdQrList') ?? [];
-    Map<String, String> data = {"code": code, "label": label, "link": link};
+    Map<String, String> data = {
+      "code": code,
+      "label": label,
+      "link": link,
+      "codeType": codeType
+    };
     box.put('createdQrList', [
       ...tempList,
       data,
     ]);
-    print("saving qrs");
-    print(data);
     createdQrs.add(data);
   }
 }

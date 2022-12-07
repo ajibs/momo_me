@@ -35,7 +35,7 @@ class ViewQR extends HookConsumerWidget {
           imgFile.writeAsBytes(pngBytes);
           GallerySaver.saveImage(imgFile.path).then((success) async {
             // store in hive for later retrieval
-            await ref.saveQRInfo(ref.qrData, ref.label, ref.link);
+            await ref.saveQRInfo(ref.qrData, ref.label, ref.link, ref.codeType);
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Data Saved')),
@@ -101,9 +101,6 @@ class ViewQR extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final qrData = ref.watch(qrProvider.notifier);
-    print("qr data here");
-    print(qrData.link);
-    print(qrData.label);
 
     return Scaffold(
       appBar: AppBar(),
@@ -132,6 +129,10 @@ class ViewQR extends HookConsumerWidget {
             ),
             Text(
               "Code: ${qrData.qrData}",
+              style: const TextStyle(fontSize: 15),
+            ),
+            Text(
+              "Type: ${qrData.codeType}",
               style: const TextStyle(fontSize: 15),
             ),
             const SizedBox(height: 25),
